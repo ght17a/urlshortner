@@ -14,6 +14,7 @@ Pour installer les packages sur Go, vous devez utiliser la commande : ```go get`
 Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : ```go get golang.org/x/crypto/bcrypt```
 
  ## Lancer le projet
+ La branche ```main``` se nomme désormais ```refacto```.
  Vous aurez à créer une base de données sur MySQL Workbench. 
  Nous vous préconisons de créer un serveur avec les ports suivants : ```127.0.0.1``` et ```3306```
  Pour lancer le projet, vous devrez vous déplacer au dossier racine du projet. Une fois arrivé, vous devez changer les identifiants, mot de passe et ports serveurs 

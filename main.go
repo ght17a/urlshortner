@@ -117,12 +117,14 @@ func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	// Récupérer la clé courte à partir de l'URL
 	shortKey := strings.TrimPrefix(r.URL.Path, "/short/")
 	if shortKey == "" {
 		http.Error(w, "Shortened key is missing", http.StatusBadRequest)
 		return
 	}
 
+	// Récupérer l'URL d'origine à partir de la base de données
 	var originalURL string
 	err := db.QueryRow("SELECT original_url FROM urls WHERE short_key = ?", shortKey).Scan(&originalURL)
 	if err != nil {
@@ -135,7 +137,14 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
+	// Rediriger l'utilisateur vers l'URL d'origine
 	http.Redirect(w, r, originalURL, http.StatusMovedPermanently)
+
+	// Incrémenter le compteur de clics dans la base de données
+	_, err = db.Exec("UPDATE urls SET get_clicked = get_clicked + 1 WHERE short_key = ?", shortKey)
+	if err != nil {
+		log.Println("Error incrementing click count:", err)
+	}
 }
 
 func generateShortKey() string {

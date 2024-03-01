@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>URL Shortener</title>
+    <title>Projet Shortner url</title>
 </head>
-<body>
-    <h2>URL Shortener</h2>
-    <p>Nombre de liens raccourcis : {{.LinkCount}}</p>
-    <h3>Toutes les URL raccourcies</h3>
-    <form method="post" action="/shorten">
-        <input type="url" name="url" placeholder="Entrez une URL" required>
-        <input type="submit" value="Raccourcir">
-    </form>
-    <ul>
-       {{range .ShortenedURLs}}
-            <li><a href="{{.ShortenedURL}}">{{.ShortenedURL}}</a> (Clics : {{.ClickCount}})</li>
-        {{end}}
-    </ul>
+<body style="display: flex; justify-content: center; flex-direction: column;">
+    <div style="display: flex; justify-content: center;  align-items: center; gap: 20px;">
+        <h2>Projet Shortner url</h2>
+        <p>Nombre de liens raccourcis : {{.LinkCount}}</p>
+        <form method="post" action="/shorten">
+            <input type="url" name="url" placeholder="Entrez une URL" required>
+            <input type="submit" value="Raccourcir">
+        </form>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <h3>Toutes les URL raccourcies</h3>
+        <ul>
+           {{range .ShortenedURLs}}
+                <li><a href="{{.ShortenedURL}}">{{.ShortenedURL}}</a> (Clics : {{.ClickCount}})</li>
+            {{end}}
+        </ul>
+    </div>
 </body>
 </html>

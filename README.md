@@ -10,7 +10,7 @@ Pour une bonne configuration du projet, il faudra plusieurs choses:
 - MySQL Workbench (pour la base de données)
 - Packages
 
-Pour installer les packages sur Go, vous devez utiliser la commande : ````go get```
+Pour installer les packages sur Go, vous devez utiliser la commande : ```go get```
 Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : ```go get golang.org/x/crypto/bcrypt```
 
  ## Lancer le projet

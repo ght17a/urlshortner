@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -12,8 +14,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+type ResultData struct {
+	OriginalURL  string
+	ShortenedURL string
+}
+
 func main() {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/urlshortner")
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/url_shortener")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,24 +52,17 @@ func handleForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>URL Shortener</title>
-        </head>
-        <body>
-            <h2>URL Shortener</h2>
-            <form method="post" action="/shorten">
-                <input type="url" name="url" placeholder="Enter a URL" required>
-                <input type="submit" value="Shorten">
-            </form>
-        </body>
-        </html>
-    `)
-}
+	// Lecture du contenu HTML du fichier form.html
+	htmlContent, err := ioutil.ReadFile("form.html")
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("Error reading HTML file:", err)
+		return
+	}
 
+	w.Header().Set("Content-Type", "text/html")
+	w.Write(htmlContent)
+}
 func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -93,20 +93,27 @@ func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>URL Shortener</title>
-        </head>
-        <body>
-            <h2>URL Shortener</h2>
-            <p>Original URL: `, originalURL, `</p>
-            <p>Shortened URL: <a href="`, shortenedURL, `">`, shortenedURL, `</a></p>
-        </body>
-        </html>
-    `)
+	// Structure de données pour les informations de résultat
+	result := ResultData{
+		OriginalURL:  originalURL,
+		ShortenedURL: shortenedURL,
+	}
+
+	// Analyse du modèle HTML
+	tmpl, err := template.ParseFiles("result.html")
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("Error parsing HTML template:", err)
+		return
+	}
+
+	// Exécution du modèle HTML avec les données du résultat
+	err = tmpl.Execute(w, result)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("Error executing HTML template:", err)
+		return
+	}
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {

@@ -25,7 +25,24 @@ Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : 
  L'application est donc lancée et vous pourrez la tester.
 
  ## Fonctionnalités de notre application
- Notre URL Shortner dispose des fonctionnalités de base, comme le raccourcissement d'URL. Ensuite, nous avons ajouté des statistiques à notre application, par 
- exemple le nombre de liens générés, et le nombre de clics par lien. Les liens sont affichés sur l'interface pour permettre à l'utilisateur de savoir quel lien a déjà 
- été raccourci.
- Nous pouvons également nous inscrire et nous connecter à l'application grâce au lien avec la base de données MySQL Workbench.
+Créer une URL raccourcie : Accédez à localhost:3030 et entrez l'URL que vous souhaitez raccourcir.
+Inscription : Pour créer un compte, cliquez sur le lien "Register" et remplissez les informations nécessaires.
+Connexion : Si vous avez déjà un compte, cliquez sur le lien "Login" pour accéder à votre espace utilisateur.
+Statistiques : Une fois connecté, vous pouvez voir le nombre total de liens générés et le nombre de clics par lien.
+
+ ## Configuration de la base de données
+Avant de lancer l'application, il faut s'assurer d'avoir une bonne configuration dans MySQL Workbench. Nous avons créé une base de données nommée urlshortner et nous avons lancé un script SQL pour créer les tables ```users``` et ```urls```, le voici :
+
+CREATE TABLE urls (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    short_key VARCHAR(6) NOT NULL,
+    original_url VARCHAR(2048) NOT NULL,
+    shortened_url VARCHAR(2048) NOT NULL,
+    get_clicked INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);

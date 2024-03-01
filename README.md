@@ -33,6 +33,7 @@ Statistiques : Une fois connecté, vous pouvez voir le nombre total de liens gé
  ## Configuration de la base de données
 Avant de lancer l'application, il faut s'assurer d'avoir une bonne configuration dans MySQL Workbench. Nous avons créé une base de données nommée urlshortner et nous avons lancé un script SQL pour créer les tables ```users``` et ```urls```, le voici :
 
+```sql
 CREATE TABLE urls (
     id INT AUTO_INCREMENT PRIMARY KEY,
     short_key VARCHAR(6) NOT NULL,

@@ -26,16 +26,27 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		functions.HandleForm(w, r, db)
-	})
-
 	http.HandleFunc("/shorten", func(w http.ResponseWriter, r *http.Request) {
 		functions.HandleShorten(w, r, db)
 	})
 
 	http.HandleFunc("/short/", func(w http.ResponseWriter, r *http.Request) {
 		functions.HandleRedirect(w, r, db)
+	})
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		functions.HandleLogin(w, r, db)
+	})
+
+	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		functions.HandleRegister(w, r, db)
+	})
+
+	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		functions.HandleLogin(w, r, db)
+	})
+
+	http.HandleFunc("/form", func(w http.ResponseWriter, r *http.Request) {
+		functions.HandleForm(w, r, db)
 	})
 
 	fmt.Println("URL Shortener is running on :3030")

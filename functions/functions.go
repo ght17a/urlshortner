@@ -10,6 +10,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ResultData struct {
@@ -186,4 +189,94 @@ func GenerateShortKey() string {
 		shortKey[i] = charset[rand.Intn(len(charset))]
 	}
 	return string(shortKey)
+}
+func HandleRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method == "GET" {
+		fmt.Fprintf(w, `<h1>Inscription</h1>
+                        <form method="post">
+                            Username: <input type="text" name="username"/><br>
+                            Password: <input type="password" name="password"/><br>
+                            <input type="submit" value="Register"/>
+                        </form>
+                        <p>Vous avez déjà un compte ? <a href="/login">Connexion</a></p>`)
+	} else if r.Method == "POST" {
+		switch r.Method {
+		case "GET":
+			fmt.Fprintf(w, "<h1>Inscription</h1><form method='post'>Username: <input type='text' name='username'/><br>Password: <input type='password' name='password'/><br><input type='submit' value='Register'/></form>")
+		case "POST":
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Erreur lors du parsing du formulaire", http.StatusInternalServerError)
+				return
+			}
+
+			username := r.FormValue("username")
+			password := r.FormValue("password")
+
+			// Hachage du mot de passe
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+			if err != nil {
+				http.Error(w, "Erreur lors du hachage du mot de passe", http.StatusInternalServerError)
+				return
+			}
+
+			// Insérer l'utilisateur dans la base de données
+			_, err = db.Exec("INSERT INTO users (username, password) VALUES (?, ?)", username, string(hashedPassword))
+			if err != nil {
+				http.Error(w, "Erreur lors de l'inscription de l'utilisateur", http.StatusInternalServerError)
+				return
+			}
+
+			// Rediriger l'utilisateur vers la page de connexion après l'inscription réussie
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		default:
+			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		}
+	}
+}
+func HandleLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method == "GET" {
+		fmt.Fprintf(w, `<h1>Connexion</h1>
+                        <form method="post">
+                            Username: <input type="text" name="username"/><br>
+                            Password: <input type="password" name="password"/><br>
+                            <input type="submit" value="Login"/>
+                        </form>
+                        <p>Vous n'avez pas de compte ? <a href="/register">Inscription</a></p>`)
+	} else if r.Method == "POST" {
+		switch r.Method {
+		case "GET":
+			fmt.Fprintf(w, "<h1>Connexion</h1><form method='post'>Username: <input type='text' name='username'/><br>Password: <input type='password' name='password'/><br><input type='submit' value='Login'/></form>")
+		case "POST":
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Erreur lors du parsing du formulaire", http.StatusInternalServerError)
+				return
+			}
+
+			username := r.FormValue("username")
+			password := r.FormValue("password")
+
+			var dbPassword string
+			err = db.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&dbPassword)
+			if err != nil {
+				if err == sql.ErrNoRows {
+					http.Error(w, "Utilisateur non trouvé", http.StatusBadRequest)
+				} else {
+					http.Error(w, "Erreur lors de la recherche de l'utilisateur", http.StatusInternalServerError)
+				}
+				return
+			}
+
+			err = bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(password))
+			if err != nil {
+				http.Error(w, "Mot de passe invalide", http.StatusUnauthorized)
+				return
+			}
+
+			http.Redirect(w, r, "/form", http.StatusSeeOther)
+		default:
+			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		}
+	}
 }

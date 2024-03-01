@@ -1,4 +1,4 @@
-package main_test
+package main
 
 import (
 	"database/sql"
@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"urlshortner/functions"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +30,7 @@ func TestHandleShorten(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Appeler la fonction handleShorten avec la requête et l'enregistreur simulés
-	handleShorten(rr, req, db)
+	functions.HandleShorten(rr, req, db)
 
 	// Vérifier que la réponse HTTP est celle attendue
 	assert.Equal(t, http.StatusOK, rr.Code, "status code should be 200 OK")
@@ -57,7 +58,7 @@ func TestHandleRedirect(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Appeler la fonction handleRedirect avec la requête et l'enregistreur simulés
-	handleRedirect(rr, req, db)
+	functions.HandleRedirect(rr, req, db)
 
 	// Vérifier que la réponse HTTP est une redirection permanente (status code 301)
 	assert.Equal(t, http.StatusMovedPermanently, rr.Code, "status code should be 301 Moved Permanently")

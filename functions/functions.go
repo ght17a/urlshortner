@@ -17,7 +17,7 @@ type ResultData struct {
 	ShortenedURL string
 }
 
-func handleForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func HandleForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Récupérer le nombre de liens raccourcis depuis la base de données
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM urls").Scan(&count)
@@ -93,7 +93,7 @@ func handleForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
-func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func HandleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -146,7 +146,7 @@ func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
-func handleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func HandleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Récupérer la clé courte à partir de l'URL
 	shortKey := strings.TrimPrefix(r.URL.Path, "/short/")
 	if shortKey == "" {

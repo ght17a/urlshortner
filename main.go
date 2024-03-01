@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"urlshortner/functions"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -26,15 +27,15 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		functions.handleForm(w, r, db)
+		functions.HandleForm(w, r, db)
 	})
 
 	http.HandleFunc("/shorten", func(w http.ResponseWriter, r *http.Request) {
-		functions.handleShorten(w, r, db)
+		functions.HandleShorten(w, r, db)
 	})
 
 	http.HandleFunc("/short/", func(w http.ResponseWriter, r *http.Request) {
-		functions.handleRedirect(w, r, db)
+		functions.HandleRedirect(w, r, db)
 	})
 
 	fmt.Println("URL Shortener is running on :3030")

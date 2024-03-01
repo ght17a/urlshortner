@@ -31,7 +31,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handleForm(w, r)
+		handleForm(w, r, db)
 	})
 	http.HandleFunc("/shorten", func(w http.ResponseWriter, r *http.Request) {
 		handleShorten(w, r, db)
@@ -47,10 +47,44 @@ func main() {
 	}
 }
 
-func handleForm(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		http.Redirect(w, r, "/shorten", http.StatusSeeOther)
+func handleForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	// Récupérer le nombre de liens raccourcis depuis la base de données
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM urls").Scan(&count)
+	if err != nil {
+		http.Error(w, "Server error", http.StatusInternalServerError)
+		log.Println("Error getting link count:", err)
 		return
+	}
+
+	// Récupérer toutes les URL raccourcies avec le nombre de clics associés
+	rows, err := db.Query("SELECT shortened_url, get_clicked FROM urls")
+	if err != nil {
+		http.Error(w, "Server error", http.StatusInternalServerError)
+		log.Println("Error getting shortened URLs:", err)
+		return
+	}
+	defer rows.Close()
+
+	// Stocker les données des URL raccourcies et le nombre de clics dans une structure
+	var shortenedURLs []struct {
+		ShortenedURL string
+		ClickCount   int
+	}
+	for rows.Next() {
+		var shortURL string
+		var clickCount int
+		if err := rows.Scan(&shortURL, &clickCount); err != nil {
+			log.Println("Error scanning rows:", err)
+			continue
+		}
+		shortenedURLs = append(shortenedURLs, struct {
+			ShortenedURL string
+			ClickCount   int
+		}{ShortenedURL: shortURL, ClickCount: clickCount})
+	}
+	if err := rows.Err(); err != nil {
+		log.Println("Error iterating rows:", err)
 	}
 
 	// Lecture du contenu HTML du fichier form.html
@@ -61,9 +95,34 @@ func handleForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Passer le nombre de liens raccourcis et les données des URL raccourcies comme données de modèle
+	data := struct {
+		LinkCount     int
+		ShortenedURLs []struct {
+			ShortenedURL string
+			ClickCount   int
+		}
+	}{
+		LinkCount:     count,
+		ShortenedURLs: shortenedURLs,
+	}
+
 	w.Header().Set("Content-Type", "text/html")
-	w.Write(htmlContent)
+	t, err := template.New("form").Parse(string(htmlContent))
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("Error parsing HTML template:", err)
+		return
+	}
+	// Exécuter le modèle avec les données de modèle
+	err = t.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Println("Error executing HTML template:", err)
+		return
+	}
 }
+
 func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)

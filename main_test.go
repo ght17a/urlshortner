@@ -93,3 +93,26 @@ func TestHandleRedirectIncrementClickCount(t *testing.T) {
 
 	assert.Equal(t, initialClickCount+1, updatedClickCount, "click count should be incremented after redirection")
 }
+
+func TestGenerateShortKey(t *testing.T) {
+	generatedKey := functions.GenerateShortKey()
+	//var generatedKey = "JknJwn"
+	expectedLength := 6
+	assert.Equal(t, expectedLength, len(generatedKey), "generated short key should have expected length")
+
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/url_shortener")
+	if err != nil {
+		t.Fatalf("failed to connect to database: %v", err)
+	}
+	defer db.Close()
+	var existingKey string
+	err = db.QueryRow("SELECT short_key FROM urls WHERE short_key = ?", generatedKey).Scan(&existingKey)
+	switch {
+	case err == sql.ErrNoRows:
+	// La clé n'existe pas dans la base de données, c'est bon
+	case err != nil:
+		t.Fatalf("error checking for existing key: %v", err)
+	default:
+		t.Fatalf("generated key already exists in database: %s", existingKey)
+	}
+}

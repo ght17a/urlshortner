@@ -26,5 +26,6 @@ Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : 
 
  ## Fonctionnalités de notre application
  Notre URL Shortner dispose des fonctionnalités de base, comme le raccourcissement d'URL. Ensuite, nous avons ajouté des statistiques à notre application, par 
- exemple le nombre de liens générés, et le nombre de clic par lien. Les liens sont affichés sur l'interface pour permettre à l'utilisateur de savoir quel lien a déjà 
- été raccourci
+ exemple le nombre de liens générés, et le nombre de clics par lien. Les liens sont affichés sur l'interface pour permettre à l'utilisateur de savoir quel lien a déjà 
+ été raccourci.
+ Nous pouvons également nous inscrire et nous connecter à l'application grâce au lien avec la base de données MySQL Workbench.

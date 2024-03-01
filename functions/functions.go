@@ -105,7 +105,7 @@ func HandleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	shortKey := generateShortKey()
+	shortKey := GenerateShortKey()
 	shortenedURL := fmt.Sprintf("http://localhost:3030/short/%s", shortKey)
 
 	stmt, err := db.Prepare("INSERT INTO urls(short_key, original_url, shortened_url) VALUES(?, ?, ?)")
@@ -176,7 +176,7 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
-func generateShortKey() string {
+func GenerateShortKey() string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	const keyLength = 6
 

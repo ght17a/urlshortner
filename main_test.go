@@ -60,14 +60,13 @@ func TestHandleRedirect(t *testing.T) {
 }
 
 func TestHandleRedirectIncrementClickCount(t *testing.T) {
-	// Créer une instance de la base de données pour les tests
 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/url_shortener")
 	if err != nil {
 		t.Fatalf("failed to connect to test database: %v", err)
 	}
+
 	defer db.Close()
 
-	// Créer une requête HTTP simulée avec une clé courte valide
 	shortKey := "pAK89O"
 	req, err := http.NewRequest("GET", "/short/"+shortKey, nil)
 	if err != nil {

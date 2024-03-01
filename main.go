@@ -53,7 +53,7 @@ func handleForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Lecture du contenu HTML du fichier form.html
-	htmlContent, err := ioutil.ReadFile("form.html")
+	htmlContent, err := ioutil.ReadFile("templates/form.html")
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Println("Error reading HTML file:", err)
@@ -100,7 +100,7 @@ func handleShorten(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	// Analyse du modèle HTML
-	tmpl, err := template.ParseFiles("result.html")
+	tmpl, err := template.ParseFiles("templates/result.html")
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Println("Error parsing HTML template:", err)

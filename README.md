@@ -15,12 +15,12 @@ Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : 
 
  ## Lancer le projet
  Vous aurez à créer une base de données sur MySQL Workbench. 
- Nous vous préconisons de créer un serveur avec les ports suivants : 127.0.0.1 et 3306
+ Nous vous préconisons de créer un serveur avec les ports suivants : ```127.0.0.1``` et ```3306```
  Pour lancer le projet, vous devrez vous déplacer au dossier racine du projet. Une fois arrivé, vous devez changer les identifiants, mot de passe et ports serveurs 
  si vous en avez des différents.
- Ensuite, lancez la commande "go run .\main.go" pour lancer le serveur local. Si c'est bon, vous aurez un message "URL Shortener is running on :3030".
+ Ensuite, lancez la commande ```go run .\main.go``` pour lancer le serveur local. Si c'est bon, vous aurez un message ```URL Shortener is running on :3030```.
 
- Pour visualiser notre application, ouvrez votre navigateur favori (nous utiliserons Chrome) et entrez l'URL suivante : "localhost:3030".
+ Pour visualiser notre application, ouvrez votre navigateur favori (nous utiliserons Chrome) et entrez l'URL suivante : ```localhost:3030```.
 
  L'application est donc lancée et vous pourrez la tester.
 

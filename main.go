@@ -37,6 +37,7 @@ func main() {
 		handleShorten(w, r, db)
 	})
 	http.HandleFunc("/short/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Print("HERE !!")
 		handleRedirect(w, r, db)
 	})
 
@@ -137,11 +138,10 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	// Rediriger l'utilisateur vers l'URL d'origine
 	http.Redirect(w, r, originalURL, http.StatusMovedPermanently)
 
 	// Incrémenter le compteur de clics dans la base de données
-	_, err = db.Exec("UPDATE urls SET get_clicked = get_clicked + 1 WHERE short_key = ?", shortKey)
+	_, err = db.Exec("UPDATE urls SET get_clicked = get_clicked + 1 WHERE id = (SELECT sub.id FROM (SELECT * FROM urls) as sub WHERE sub.short_key = ? LIMIT 1) ", shortKey)
 	if err != nil {
 		log.Println("Error incrementing click count:", err)
 	}

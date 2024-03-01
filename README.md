@@ -8,9 +8,14 @@ Pour une bonne configuration du projet, il faudra plusieurs choses:
 - Un éditeur de code (nous utiliserons Visual Studio Code)
 - Golang (le langage utilisé)
 - MySQL Workbench (pour la base de données)
+- Packages
+
+Pour installer les packages sur Go, vous devez utiliser la commande : ````go get```
+Par exemple, pour installer le package bcrypt, vous devrez lancer la commande : ```go get golang.org/x/crypto/bcrypt```
 
  ## Lancer le projet
- Vous aurez à créer une base de données sur MySQL Workbench. Nous vous préconisons de créer un serveur avec les ports suivants : 127.0.0.1 et 3306
+ Vous aurez à créer une base de données sur MySQL Workbench. 
+ Nous vous préconisons de créer un serveur avec les ports suivants : 127.0.0.1 et 3306
  Pour lancer le projet, vous devrez vous déplacer au dossier racine du projet. Une fois arrivé, vous devez changer les identifiants, mot de passe et ports serveurs 
  si vous en avez des différents.
  Ensuite, lancez la commande "go run .\main.go" pour lancer le serveur local. Si c'est bon, vous aurez un message "URL Shortener is running on :3030".
